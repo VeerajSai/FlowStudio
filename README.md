@@ -3,7 +3,7 @@
 
   # FlowStudio
 
-  **Visual workflow editor for building and validating AI pipelines.**
+  **Visual workflow editor for AI pipelines. Drag, connect, validate.**
 
   [![React](https://img.shields.io/badge/React-18-149ECA?logo=react&logoColor=white)](https://react.dev/)
   [![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
@@ -18,29 +18,53 @@
   <img src="docs/assets/demo.gif" width="100%" alt="FlowStudio workflow editor demo" />
 </p>
 
-## About
+## What is FlowStudio?
 
-FlowStudio is a drag-and-drop pipeline editor where you wire together typed nodes, create dynamic template variables, and validate the graph structure through a Python backend. The node system is config-driven, so adding a new node type is just a few lines of code.
+A React + FastAPI pipeline builder where you visually wire typed nodes. Add nodes by dragging them onto the canvas, connect ports, define template variables with `{{ }}` syntax, and get instant validation feedback. The entire node system is config-driven—no JSX needed to add a new node type.
 
 <p align="center">
   <img src="docs/assets/light-workflow.png" width="49%" alt="Light theme" />
   <img src="docs/assets/dark-workflow.png" width="49%" alt="Dark theme" />
 </p>
 
-## Features
+## Why FlowStudio?
 
-- **Config-driven nodes** - Shared rendering, fields, ports, colors, and defaults behind a single reusable abstraction
-- **Dynamic text nodes** - `{{ variable_name }}` expressions auto-create input ports; removing a variable cleans up its edges
-- **Graph-aware editing** - Cycle warnings, live DAG status, one-wire-per-input guardrails, collision-aware placement, minimap
-- **Editor shortcuts** - Undo/redo, copy/paste, duplication, marquee selection, keyboard shortcuts, command search, import/export, autosave
-- **Accessible UI** - Keyboard-operable node palette, focus-managed dialogs, semantic combobox/listbox behavior, visible focus states
-- **Backend validation** - Typed Pydantic models, endpoint validation, node/edge counts, and Kahn's algorithm for DAG detection
+- **Zero boilerplate nodes** - Define a node in JSON; get rendering, ports, fields, validation for free
+- **Template variables** - Type `{{ name }}` in text nodes and input ports generate automatically
+- **Smart graph checks** - Cycle detection (Kahn's algorithm), DAG validation, one-wire-per-input
+- **Polish** - Collision-aware placement, undo/redo, autosave, keyboard shortcuts, import/export
+- **Accessible** - Full keyboard control, focus management, semantic combobox/listbox
+- **Type-safe backend** - Pydantic models validate every request; schema mismatches fail fast
+
+## Quick Start
+
+### Prerequisites
+- Node.js 20+
+- Python 3.10+
+
+### 1. Start backend
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+### 2. Start frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000)
 
 ## Architecture
 
 ```mermaid
 graph TB
-    subgraph client["React Client (Browser)"]
+    subgraph client["React Client"]
         toolbar["📋 Toolbar<br/>(Node Palette)"]
         registry["🔧 Node Registry<br/>(Config per type)"]
         basenode["🎨 BaseNode<br/>(Shell + Ports)"]
@@ -49,9 +73,9 @@ graph TB
         local["💾 Autosave<br/>Import/Export"]
     end
 
-    subgraph server["FastAPI Backend (Python)"]
-        pydantic["✓ Pydantic Models<br/>(Validation)"]
-        kahn["🔗 Kahn Algorithm<br/>(DAG Detection)"]
+    subgraph server["FastAPI Backend"]
+        pydantic["✓ Pydantic<br/>(Validation)"]
+        kahn["🔗 Kahn<br/>(DAG Check)"]
         response["📤 Response"]
     end
 
@@ -63,12 +87,17 @@ graph TB
     canvas --> |POST /pipelines/parse| pydantic
     pydantic --> kahn
     kahn --> response
-    response --> |num_nodes,<br/>num_edges, is_dag| canvas
+    response --> |is_dag, counts| canvas
 ```
 
-### How the node system works
+## How Nodes Work
 
-Every node type is declared in `frontend/src/nodes/registry.jsx`. The registry drives the toolbar, generates default data, and builds React Flow's `nodeTypes` map. Static nodes are pure config; specialized nodes (like Text or Merge) provide a custom body component while reusing the same shell and port system.
+Each node is a config object in `frontend/src/nodes/registry.jsx`. The registry handles:
+- Rendering the toolbar
+- Building React Flow's `nodeTypes` map
+- Seeding default field values
+
+Static nodes are pure config. Complex nodes (Text, Merge) swap in a custom body component while reusing the shell.
 
 ```jsx
 {
@@ -86,54 +115,24 @@ Every node type is declared in `frontend/src/nodes/registry.jsx`. The registry d
 }
 ```
 
-## Node Types
+## Node Catalog
 
-| Category | Nodes | What they do |
-|----------|-------|--------------|
-| I/O | Input, Output, Text | Pipeline boundaries and templated content |
-| AI | LLM | Prompt + system inputs, model response output |
-| Logic | Math, Filter, Threshold | Computation and conditional routing |
-| Data | Merge | Dynamic fan-in with configurable input count |
-| Network | API Request | HTTP requests with response/error paths |
+| Type | Ports | Use |
+|------|-------|-----|
+| **Input** | 1 out | Pipeline entry point |
+| **Output** | 1 in | Pipeline exit |
+| **Text** | N in (dynamic), 1 out | Template variables + string output |
+| **LLM** | 2 in (system, prompt), 1 out | LLM inference |
+| **Math** | 1 in, 1 out | Add, subtract, multiply, divide |
+| **Filter** | 1 in, 2 out (true/false) | Conditional routing |
+| **API Request** | 2 in, 2 out (response/error) | HTTP calls |
+| **Merge** | N in (configurable), 1 out | Fan-in combiner |
+| **Threshold** | 1 in, 2 out (above/below) | Value comparison |
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 20+
-- Python 3.10+
-
-### 1. Start the backend
-
-```bash
-cd backend
-python -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-
-# macOS / Linux
-source .venv/bin/activate
-
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-
-### 2. Start the frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000). The API runs on `http://localhost:8000` by default. Set `VITE_API_URL` to point to a different backend.
-
-## API Reference
+## API
 
 **`POST /pipelines/parse`**
 
-Request:
 ```json
 {
   "nodes": [{ "id": "input-1" }, { "id": "output-1" }],
@@ -150,58 +149,54 @@ Response:
 }
 ```
 
-Malformed payloads, duplicate node IDs, and dangling edge endpoints return `422` before graph analysis runs.
+Returns `422` for malformed payloads, duplicate node IDs, or dangling edges.
 
 ## Testing
 
 ```bash
-# Frontend unit + component tests (54)
+# Frontend (54 unit + component tests)
 cd frontend && npm test
 
-# End-to-end tests (Playwright)
+# E2E (Playwright)
 npm run test:e2e
 
-# Production build + audit
-npm run build && npm audit
+# Backend (20 tests)
+cd backend && pip install -r requirements-dev.txt && pytest -q
 
-# Backend tests (20)
-cd ../backend
-pip install -r requirements-dev.txt
-pytest -q
+# Build + audit
+npm run build && npm audit
 ```
 
-## Project Structure
+## Project Layout
 
 ```
 .
 ├── backend/
-│   ├── main.py                 # FastAPI app, models, DAG analysis
-│   └── test_main.py            # API + graph tests
+│   ├── main.py          # FastAPI + Pydantic + Kahn's algorithm
+│   └── test_main.py     # API + graph validation tests
 ├── frontend/
-│   ├── e2e/                    # Playwright browser tests
+│   ├── e2e/             # Playwright tests
 │   ├── src/
-│   │   ├── components/         # Editor chrome (toolbar, dialogs, status)
-│   │   ├── nodes/              # Node registry, shell, fields, custom bodies
-│   │   ├── hooks/              # Keyboard shortcuts
-│   │   ├── lib/graph.js        # Client-side DAG check
-│   │   ├── store.js            # Zustand graph state + editor commands
-│   │   └── ui.jsx              # React Flow canvas wrapper
+│   │   ├── nodes/       # Registry, BaseNode, field renderers
+│   │   ├── store.js     # Zustand graph state
+│   │   ├── ui.jsx       # React Flow canvas
+│   │   ├── hooks/       # Keyboard shortcuts
+│   │   └── components/  # Toolbar, dialogs, status bar
 │   └── vite.config.js
-└── docs/assets/                # Screenshots and demo GIF
+└── docs/assets/         # Screenshots
 ```
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
+| Key | Action |
+|-----|--------|
 | `Ctrl/Cmd + K` | Command palette |
 | `Ctrl/Cmd + A` | Select all |
-| `Ctrl/Cmd + Z` | Undo |
-| `Ctrl/Cmd + Shift + Z` / `Ctrl/Cmd + Y` | Redo |
-| `Ctrl/Cmd + D` | Duplicate selection |
-| `Ctrl/Cmd + C` / `Ctrl/Cmd + V` | Copy / Paste |
-| `Delete` / `Backspace` | Delete selection |
+| `Ctrl/Cmd + Z` / `Y` | Undo / Redo |
+| `Ctrl/Cmd + D` | Duplicate |
+| `Ctrl/Cmd + C` / `V` | Copy / Paste |
+| `Delete` | Remove selected |
 
 ## License
 
-[MIT](LICENSE)
+MIT
