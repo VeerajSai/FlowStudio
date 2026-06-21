@@ -52,7 +52,7 @@ body {
 }
 
 /* ----------------------------------------------------------------------------
-   React Flow chrome theming — keep the canvas feeling like one product surface.
+   React Flow chrome theming
    ------------------------------------------------------------------------- */
 .react-flow__attribution {
   display: none;
@@ -129,8 +129,7 @@ body {
 }
 
 /* ----------------------------------------------------------------------------
-   Dark mode overrides — only for React Flow's injected DOM that Tailwind tokens
-   can't reach. Node/chrome surfaces flip automatically via the token channels.
+   Dark mode overrides for React Flow's injected DOM (Tailwind tokens can't reach these).
    -------------------------------------------------------------------------- */
 .dark .react-flow__background {
   background: #0f172a;

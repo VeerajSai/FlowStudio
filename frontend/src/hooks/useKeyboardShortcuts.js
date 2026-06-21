@@ -12,7 +12,7 @@ export default function useKeyboardShortcuts({ onTogglePalette }) {
 
       const ctrl = e.ctrlKey || e.metaKey;
 
-      // Ctrl+K — command palette (always works)
+      // Ctrl+K: command palette (always works)
       if (ctrl && e.key === 'k') {
         e.preventDefault();
         onTogglePalette?.();
@@ -22,7 +22,7 @@ export default function useKeyboardShortcuts({ onTogglePalette }) {
       // Don't intercept shortcuts when user is typing in an input
       if (isInput) return;
 
-      // Ctrl+A — select all nodes + edges
+      // Ctrl+A: select all nodes + edges
       if (ctrl && e.key === 'a') {
         e.preventDefault();
         const { nodes, edges } = useStore.getState();
@@ -33,21 +33,21 @@ export default function useKeyboardShortcuts({ onTogglePalette }) {
         return;
       }
 
-      // Ctrl+Z — undo
+      // Ctrl+Z: undo
       if (ctrl && e.key === 'z' && !e.shiftKey) {
         e.preventDefault();
         useStore.getState().undo();
         return;
       }
 
-      // Ctrl+Shift+Z or Ctrl+Y — redo
+      // Ctrl+Shift+Z or Ctrl+Y: redo
       if ((ctrl && e.shiftKey && e.key === 'z') || (ctrl && e.key === 'y')) {
         e.preventDefault();
         useStore.getState().redo();
         return;
       }
 
-      // Ctrl+D — duplicate selected
+      // Ctrl+D: duplicate selected
       if (ctrl && e.key === 'd') {
         e.preventDefault();
         const selected = useStore
@@ -60,7 +60,7 @@ export default function useKeyboardShortcuts({ onTogglePalette }) {
         return;
       }
 
-      // Ctrl+C — copy
+      // Ctrl+C: copy
       if (ctrl && e.key === 'c') {
         const selected = useStore
           .getState()
@@ -72,13 +72,13 @@ export default function useKeyboardShortcuts({ onTogglePalette }) {
         return;
       }
 
-      // Ctrl+V — paste
+      // Ctrl+V: paste
       if (ctrl && e.key === 'v') {
         useStore.getState().pasteNodes();
         return;
       }
 
-      // Delete / Backspace — delete selected
+      // Delete / Backspace: delete selected
       if (e.key === 'Delete' || e.key === 'Backspace') {
         const { nodes, edges } = useStore.getState();
         const selectedNodes = nodes.filter((n) => n.selected).map((n) => n.id);

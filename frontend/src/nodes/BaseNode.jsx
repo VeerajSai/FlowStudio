@@ -3,8 +3,7 @@ import { Handle, Position } from 'reactflow';
 import { resolveHandles } from './handles';
 import FieldRenderer from './fields/FieldRenderer';
 
-// Half the 11px handle (index.css) — pulls the dot out so it straddles the
-// card's outer edge instead of sitting on the inner row edge.
+// Half the 11px handle size; pulls the dot to straddle the card edge.
 const EDGE_OFFSET = -5.5;
 
 function BaseNode({ id, data, config }) {
@@ -38,8 +37,7 @@ function BaseNode({ id, data, config }) {
         </span>
       </div>
 
-      {/* Ports band — each handle owns a labeled row so labels never overlap the
-          body, and the dot is pinned to the card edge for clean wiring. */}
+      {/* Ports band */}
       {hasPorts && (
         <div className="flex justify-between gap-3 py-2">
           <div className="flex flex-col gap-2">

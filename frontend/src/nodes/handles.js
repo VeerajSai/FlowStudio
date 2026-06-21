@@ -6,7 +6,7 @@
  * @typedef  {Object} HandleDef
  * @property {'source'|'target'} type
  * @property {'left'|'right'}    side
- * @property {string}            id       — suffix appended to the node's id
+ * @property {string}            id       Suffix appended to the node's id
  * @property {string}            [label]
  */
 
@@ -19,8 +19,8 @@
  * fullId, the React Flow type, the side, and the label.
  *
  * @param {HandleDef[]|((data:object)=>HandleDef[])} handles
- * @param {object}  data   — the node's current data
- * @param {string}  nodeId — used to build the full handle id
+ * @param {object}  data   The node's current data
+ * @param {string}  nodeId Used to build the full handle id
  * @returns {{ fullId:string, type:string, position:'Left'|'Right', label?:string }[]}
  */
 export function resolveHandles(handles, data, nodeId) {

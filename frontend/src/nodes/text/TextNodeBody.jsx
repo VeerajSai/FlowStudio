@@ -65,7 +65,7 @@ export default function TextNodeBody({ id, data }) {
     if (desired !== prevWidthRef.current) {
       prevWidthRef.current = desired;
       updateNodeField(id, '_nodeWidth', desired);
-      // Width change moves the right-column output handle's x — re-measure.
+      // Width change moves the output handle; re-measure.
       updateNodeInternals(id);
     }
   }, [localText, id, updateNodeField, updateNodeInternals]);

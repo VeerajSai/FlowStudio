@@ -27,8 +27,7 @@ module.exports = {
           faint: 'rgb(var(--flow-ink-faint) / <alpha-value>)',
         },
         port: 'rgb(var(--flow-port) / <alpha-value>)',
-        // Per-category accents — used ONLY for the node's icon + 3px left bar,
-        // never as a full header fill (no rainbow headers).
+        // Per-category accents: used for the node icon + 3px left bar only.
         cat: {
           io: '#0ea5e9',
           llm: '#8b5cf6',

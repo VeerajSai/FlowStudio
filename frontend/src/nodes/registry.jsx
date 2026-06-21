@@ -1,5 +1,5 @@
-// Node registry — every node in the pipeline builder is defined by a config
-// object here.  Adding a new node means adding ONE entry (~10 lines).
+// Node registry: every node in the pipeline builder is defined by a config
+// object here. Adding a new node means adding one entry (~10 lines).
 //
 // Each config is { type, title, icon, category, accent, width?, fields[],
 // handles[] | deriveHandles(data), init?, body?, description? }.
@@ -257,8 +257,7 @@ export function getInitData(type, id) {
   return { id, nodeType: type, ...fieldDefaults, ...initData };
 }
 
-// Build React Flow's nodeTypes map — one wrapper component per config that
-// injects the config into BaseNode.
+// Build React Flow's nodeTypes map. One wrapper component per config.
 export function buildNodeTypes() {
   const types = {};
   for (const cfg of NODE_CONFIGS) {
