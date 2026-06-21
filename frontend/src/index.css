@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ----------------------------------------------------------------------------
+   Semantic design tokens as space-separated RGB channels. Tailwind maps these
+   via `rgb(var(--x) / <alpha-value>)` so every text-ink / bg-card / border-
+   hairline / `/opacity` utility is theme-aware from one source of truth.
+   Flip the whole UI by overriding the channels under `.dark`.
+   ------------------------------------------------------------------------- */
+:root {
+  --flow-canvas: 247 248 250;
+  --flow-card: 255 255 255;
+  --flow-field: 255 255 255;
+  --flow-hairline: 229 231 235;
+  --flow-ink: 31 36 48;
+  --flow-ink-muted: 107 114 128;
+  --flow-ink-faint: 156 163 175;
+  --flow-port: 107 114 128;
+  /* Indigo accent is identical in both themes; tripleted so /opacity works. */
+  --flow-accent: 81 61 217;
+  --flow-accent-hover: 72 54 194;
+  --flow-accent-pressed: 61 46 166;
+  --flow-accent-tint: 236 233 251;
+  --flow-accent-ring: 199 190 244;
+}
+
+.dark {
+  --flow-canvas: 15 23 42;
+  --flow-card: 30 41 59;
+  --flow-field: 15 23 42;
+  --flow-hairline: 51 65 85;
+  --flow-ink: 226 232 240;
+  --flow-ink-muted: 148 163 184;
+  --flow-ink-faint: 100 116 139;
+  --flow-port: 148 163 184;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: rgb(var(--flow-ink));
+  background: rgb(var(--flow-canvas));
+}
+
+/* ----------------------------------------------------------------------------
+   React Flow chrome theming — keep the canvas feeling like one product surface.
+   ------------------------------------------------------------------------- */
+.react-flow__attribution {
+  display: none;
+}
+
+/* Edges: muted slate by default, indigo + thicker when selected. */
+.react-flow__edge-path {
+  stroke: #94a3b8;
+  stroke-width: 1.5;
+  transition: stroke 140ms ease, stroke-width 140ms ease;
+}
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: #513dd9;
+  stroke-width: 2;
+}
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke-dasharray: 5;
+}
+
+/* Connection line while dragging a new edge. */
+.react-flow__connectionline .react-flow__edge-path,
+.react-flow__connection-path {
+  stroke: #513dd9;
+  stroke-width: 2;
+}
+
+/* Handles: premium circular ports, grow + glow on hover. */
+.react-flow__handle {
+  width: 11px;
+  height: 11px;
+  background: #ffffff;
+  border: 2px solid #94a3b8;
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+.react-flow__handle:hover,
+.react-flow__handle.connectionindicator:hover {
+  border-color: #513dd9;
+  transform: scale(1.18);
+  box-shadow: 0 0 0 4px rgba(81, 61, 217, 0.16);
+}
+.react-flow__handle-connecting {
+  border-color: #513dd9;
+}
+.react-flow__handle-valid {
+  border-color: #10b981;
+}
+
+/* Controls + MiniMap: soft, on-brand chrome. */
+.react-flow__controls {
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 4px 12px rgba(16, 24, 40, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+.react-flow__controls-button {
+  background: #ffffff;
+  border-bottom: 1px solid #eef0f3;
+  color: #6b7280;
+}
+.react-flow__controls-button:hover {
+  background: #f3f0fd;
+  color: #513dd9;
+}
+.react-flow__minimap {
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+/* Selected node card outline handled via shadow token on the node itself. */
+.react-flow__node.selected .flow-node {
+  box-shadow: 0 0 0 2px #513dd9, 0 8px 24px rgba(81, 61, 217, 0.18);
+}
+
+/* ----------------------------------------------------------------------------
+   Dark mode overrides — only for React Flow's injected DOM that Tailwind tokens
+   can't reach. Node/chrome surfaces flip automatically via the token channels.
+   -------------------------------------------------------------------------- */
+.dark .react-flow__background {
+  background: #0f172a;
+}
+.dark .react-flow__edge-path {
+  stroke: #475569;
+}
+.dark .react-flow__edge.selected .react-flow__edge-path,
+.dark .react-flow__edge:hover .react-flow__edge-path {
+  stroke: #7c6cf0;
+}
+.dark .react-flow__handle {
+  background: #1e293b;
+  border-color: #475569;
+}
+.dark .react-flow__handle:hover {
+  border-color: #7c6cf0;
+  box-shadow: 0 0 0 4px rgba(124, 108, 240, 0.25);
+}
+.dark .react-flow__controls {
+  border-color: #334155;
+}
+.dark .react-flow__controls-button {
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
+}
+.dark .react-flow__controls-button:hover {
+  background: #262f45;
+  color: #7c6cf0;
+}
+.dark .react-flow__minimap {
+  border-color: #334155;
+  background: #1e293b;
+}
+.dark .react-flow__minimap-mask {
+  fill: rgba(15, 23, 42, 0.72);
+}
+.dark .react-flow__node.selected .flow-node {
+  box-shadow: 0 0 0 2px #7c6cf0, 0 8px 24px rgba(124, 108, 240, 0.25);
+}
+.dark .flow-node {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.dark .flow-node:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}

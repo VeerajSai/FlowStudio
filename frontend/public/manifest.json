@@ -1,0 +1,16 @@
+{
+  "short_name": "FlowStudio",
+  "name": "FlowStudio - Visual AI Workflow Builder",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#513dd9",
+  "background_color": "#f7f8fa"
+}
